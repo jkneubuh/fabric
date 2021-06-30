@@ -73,7 +73,7 @@ func (dbInst *DB) Open() {
 	}
 	dbOpts.ErrorIfMissing = !dirEmpty
 	if dbInst.db, err = leveldb.OpenFile(dbPath, dbOpts); err != nil {
-		panic(fmt.Sprintf("Error opening leveldb: %s", err))
+		panic(fmt.Sprintf("Error opening leveldb [%s]: %s", dbPath, err))
 	}
 	dbInst.dbState = opened
 }
