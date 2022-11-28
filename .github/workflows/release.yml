@@ -34,9 +34,15 @@ jobs:
         - image: ubuntu-20.04
           target: linux
           arch: amd64
+        - image: ubuntu-20.04
+          target: linux
+          arch: arm64
         - image: macos-11
           target: darwin
           arch: amd64
+        - image: macos-11
+          target: darwin
+          arch: arm64
         - image: windows-2022
           target: windows
           arch: amd64
