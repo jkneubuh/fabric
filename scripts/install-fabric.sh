@@ -21,10 +21,11 @@ _arg_comp=('' )
 
 # if version not passed in, default to latest released version
 # if ca version not passed in, default to latest released version
-_arg_fabric_version="2.4.4"
-_arg_ca_version="1.5.5"
+_arg_fabric_version="2.5.0"
+_arg_ca_version="1.5.6"
 
-ARCH=$(echo "$(uname -s|tr '[:upper:]' '[:lower:]'|sed 's/mingw64_nt.*/windows/')-$(uname -m |sed 's/x86_64/amd64/g')" |sed 's/darwin-arm64/darwin-amd64/g')
+REGISTRY=${FABRIC_DOCKER_REGISTRY:-docker.io/hyperledger}
+ARCH=$(echo "$(uname -s|tr '[:upper:]' '[:lower:]'|sed 's/mingw64_nt.*/windows/')-$(uname -m |sed 's/x86_64/amd64/g')")
 MARCH=$(uname -m)
 
 die()
@@ -49,8 +50,8 @@ print_help()
 {
 	printf 'Usage: %s [-f|--fabric-version <arg>] [-c|--ca-version <arg>] <comp-1> [<comp-2>] ... [<comp-n>] ...\n' "$0"
 	printf '\t%s\n' "<comp> Component to install, one or more of  docker | binary | samples | podman  First letter of component also accepted; If none specified docker | binary | samples is assumed"
-	printf '\t%s\n' "-f, --fabric-version: FabricVersion (default: '2.4.4')"
-	printf '\t%s\n' "-c, --ca-version: Fabric CA Version (default: '1.5.5')"
+	printf '\t%s\n' "-f, --fabric-version: FabricVersion (default: '2.5.0')"
+	printf '\t%s\n' "-c, --ca-version: Fabric CA Version (default: '1.5.6')"
 }
 
 
@@ -143,10 +144,10 @@ singleImagePull() {
     while [[ $# -gt 0 ]]
     do
         image_name="$1"
-        echo "====>  hyperledger/fabric-$image_name:$three_digit_image_tag"
-        ${CONTAINER_CLI} pull "hyperledger/fabric-$image_name:$three_digit_image_tag"
-        ${CONTAINER_CLI} tag "hyperledger/fabric-$image_name:$three_digit_image_tag" "hyperledger/fabric-$image_name"
-        ${CONTAINER_CLI} tag "hyperledger/fabric-$image_name:$three_digit_image_tag" "hyperledger/fabric-$image_name:$two_digit_image_tag"
+        echo "====>  ${REGISTRY}/fabric-$image_name:$three_digit_image_tag"
+        ${CONTAINER_CLI} pull "${REGISTRY}/fabric-$image_name:$three_digit_image_tag"
+        ${CONTAINER_CLI} tag "${REGISTRY}/fabric-$image_name:$three_digit_image_tag" "${REGISTRY}/fabric-$image_name"
+        ${CONTAINER_CLI} tag "${REGISTRY}/fabric-$image_name:$three_digit_image_tag" "${REGISTRY}/fabric-$image_name:$two_digit_image_tag"
         shift
     done
 }
