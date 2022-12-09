@@ -12,6 +12,7 @@ env:
   GO_VER: 1.18.7
   ALPINE_VER: 3.16
   FABRIC_VER: ${{ github.ref_name }}
+  CCBUILDER_VER: 0.9.3
   DOCKER_REGISTRY: ghcr.io
 
 permissions:
@@ -131,6 +132,7 @@ jobs:
           build-args: |
             FABRIC_VER=${{ env.FABRIC_VER }}
             ALPINE_VER=${{ env.ALPINE_VER }}
+            CCBUILDER_VER=${{ env.CCBUILDER_VER }}
             GO_VER=${{ env.GO_VER }}
             GO_TAGS=
 

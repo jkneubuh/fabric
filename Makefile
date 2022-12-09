@@ -48,6 +48,7 @@
 
 ALPINE_VER ?= 3.16
 FABRIC_VER ?= 2.5.0
+CCBUILDER_VER ?= 0.9.3
 
 # 3rd party image version
 # These versions are also set in the runners in ./integration/runners/
@@ -251,6 +252,7 @@ $(BUILD_DIR)/images/%/$(DUMMY):
 		--build-arg GO_VER=$(GO_VER) \
 		--build-arg ALPINE_VER=$(ALPINE_VER) \
 		--build-arg FABRIC_VER=$(FABRIC_VER) \
+		--build-arg CCBUILDER_VER=$(CCBUILDER_VER) \
 		$(BUILD_ARGS) \
 		-t $(DOCKER_NS)/fabric-$* ./$(BUILD_CONTEXT)
 	@touch $@
