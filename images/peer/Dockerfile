@@ -19,8 +19,8 @@ ARG FABRIC_VER
 
 # Really simple docker build: install the statically linked binary from the multi-arch distribution
 # (TODO: or from the local build context if building locally)
-RUN curl -sL \
-    https://github.com/hyperledger/fabric/releases/download/v${FABRIC_VER}/hyperledger-fabric-${TARGETOS}-${TARGETARCH}-${FABRIC_VER}.tar.gz \
+RUN REV=$(echo $FABRIC_VER | sed -e  's/^v\(.*\)/\1/') && \
+    curl -sL https://github.com/hyperledger/fabric/releases/download/${FABRIC_VER}/hyperledger-fabric-${TARGETOS}-${TARGETARCH}-${REV}.tar.gz \
     | tar zxvf - \
         bin/peer \
         builders/ccaas

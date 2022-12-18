@@ -15,8 +15,8 @@ ARG TARGETOS
 ARG TARGETARCH
 ARG FABRIC_VER
 
-RUN curl -sL \
-    https://github.com/hyperledger/fabric/releases/download/v${FABRIC_VER}/hyperledger-fabric-${TARGETOS}-${TARGETARCH}-${FABRIC_VER}.tar.gz \
+RUN REV=$(echo $FABRIC_VER | sed -e  's/^v\(.*\)/\1/') && \
+    curl -sL https://github.com/hyperledger/fabric/releases/download/${FABRIC_VER}/hyperledger-fabric-${TARGETOS}-${TARGETARCH}-${REV}.tar.gz \
     | tar zxvf - \
         -C /usr/local bin
 
