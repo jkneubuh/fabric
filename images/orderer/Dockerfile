@@ -2,45 +2,35 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-ARG GO_VER
 ARG ALPINE_VER
+FROM alpine:${ALPINE_VER}
 
-FROM alpine:${ALPINE_VER} as base
-RUN apk add --no-cache tzdata
-# set up nsswitch.conf for Go's "netgo" implementation
-# - https://github.com/golang/go/blob/go1.9.1/src/net/conf.go#L194-L275
-# - docker run --rm debian:stretch grep '^hosts:' /etc/nsswitch.conf
-RUN echo 'hosts: files dns' > /etc/nsswitch.conf
-
-FROM golang:${GO_VER}-alpine${ALPINE_VER} as golang
 RUN apk add --no-cache \
-	bash \
-	binutils-gold \
-	gcc \
-	git \
-	make \
-	musl-dev
-ADD . $GOPATH/src/github.com/hyperledger/fabric
-WORKDIR $GOPATH/src/github.com/hyperledger/fabric
+    bash \
+    curl \
+    tzdata
 
-FROM golang as orderer
-ARG GO_TAGS
+ARG TARGETOS
+ARG TARGETARCH
 ARG FABRIC_VER
-ENV FABRIC_VER ${FABRIC_VER}
 
-# Disable cgo when building in the container.  This will create a static binary, which can be
-# copied and run in the base alpine container without the libc/musl runtime.
-ENV CGO_ENABLED 0
+# Really simple docker build: install the statically linked binary from the multi-arch distribution
+# (TODO: or from the local build context if building locally)
+RUN curl -sL \
+    https://github.com/hyperledger/fabric/releases/download/v${FABRIC_VER}/hyperledger-fabric-${TARGETOS}-${TARGETARCH}-${FABRIC_VER}.tar.gz \
+    | tar zxvf - \
+        -C /usr/local bin/orderer
 
-RUN make orderer GO_TAGS=${GO_TAGS}
+ENV     FABRIC_CFG_PATH            /var/hyperledger/fabric/config
+ENV     FABRIC_VER                 ${FABRIC_VER}
 
-FROM base
-ENV FABRIC_CFG_PATH /etc/hyperledger/fabric
-VOLUME /etc/hyperledger/fabric
-VOLUME /var/hyperledger
-COPY --from=orderer /go/src/github.com/hyperledger/fabric/build/bin /usr/local/bin
-COPY --from=orderer /go/src/github.com/hyperledger/fabric/sampleconfig/msp ${FABRIC_CFG_PATH}/msp
-COPY --from=orderer /go/src/github.com/hyperledger/fabric/sampleconfig/orderer.yaml ${FABRIC_CFG_PATH}
-COPY --from=orderer /go/src/github.com/hyperledger/fabric/sampleconfig/configtx.yaml ${FABRIC_CFG_PATH}
-EXPOSE 7050
-CMD ["orderer"]
+COPY    sampleconfig/msp           ${FABRIC_CFG_PATH}/msp
+COPY    sampleconfig/orderer.yaml  ${FABRIC_CFG_PATH}
+COPY    sampleconfig/configtx.yaml ${FABRIC_CFG_PATH}
+
+VOLUME  /etc/hyperledger/fabric
+VOLUME  /var/hyperledger
+EXPOSE  7050
+
+ENTRYPOINT  [ "orderer" ]
+CMD         [ "start" ]

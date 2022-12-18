@@ -1,0 +1,35 @@
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+# K.I.S.S
+
+# KISS: just download the arch-specific, statically linked binaries.
+ARG ALPINE_VER
+FROM alpine:${ALPINE_VER} as builder
+
+RUN apk add bash curl
+
+WORKDIR /build/fabric
+
+RUN curl -sL https://raw.githubusercontent.com/hyperledger/fabric/main/scripts/install-fabric.sh \
+    | bash -s -- binary --fabric-version 2.5.0-alpha2 --ca-version 1.5.6-beta2
+
+
+# KISS : just copy the (statically linked) peer binary into an alpine container.
+FROM alpine:${ALPINE_VER}
+
+RUN apk add curl
+
+ENV FABRIC_CFG_PATH /var/hyperledger/fabric/config
+
+COPY sampleconfig/msp ${FABRIC_CFG_PATH}/msp
+COPY sampleconfig/core.yaml ${FABRIC_CFG_PATH}/core.yaml
+
+COPY --from=builder /build/fabric/bin/peer /usr/local/bin
+COPY --from=builder /build/fabric/builders/ccaas/bin /opt/hyperledger/ccaas_builder/bin/
+
+EXPOSE 7051
+
+ENTRYPOINT [ "peer" ]
+CMD [ "node", "start" ]

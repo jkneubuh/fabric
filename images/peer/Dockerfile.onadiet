@@ -1,0 +1,58 @@
+#
+# Try without libmusl - use alpine's gcc, go, etc. during build.
+#
+
+# Copyright IBM Corp. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+
+ARG ALPINE_VER
+#FROM alpine:${ALPINE_VER} as builder
+FROM alpine:3.16 as builder
+
+ARG GO_VER
+ARG GO_TAGS
+
+RUN apk add --no-cache \
+    go \
+    gcc \
+    make \
+    musl-dev
+
+ADD . /go/src/github.com/hyperledger/fabric
+WORKDIR /go/src/github.com/hyperledger/fabric
+
+#ENV CC=aarch64-alpine-linux-musl-gcc
+ENV CGO_ENABLED 1
+ENV GO_LDFLAGS  "-linkmode external -extldflags '-static' "
+
+
+RUN make clean
+RUN make peer GO_TAGS=${GO_TAGS}
+
+
+
+
+
+
+FROM alpine:3.16
+
+ENV FABRIC_CFG_PATH /etc/hyperledger/fabric
+
+VOLUME /etc/hyperledger/fabric
+VOLUME /var/hyperledger
+
+COPY --from=builder /go/src/github.com/hyperledger/fabric/build/bin /usr/local/bin
+COPY --from=builder /go/src/github.com/hyperledger/fabric/sampleconfig/msp ${FABRIC_CFG_PATH}/msp
+COPY --from=builder /go/src/github.com/hyperledger/fabric/sampleconfig/core.yaml ${FABRIC_CFG_PATH}/core.yaml
+
+#COPY --from=peer /go/src/github.com/hyperledger/fabric/release/${TARGETOS}-${TARGETARCH}/builders/ccaas/bin/ /opt/hyperledger/ccaas_builder/bin/
+EXPOSE 7051
+
+ENTRYPOINT [ "peer" ]
+CMD [ "node", "start" ]
+
+
+
+
+

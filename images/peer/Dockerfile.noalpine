@@ -1,0 +1,41 @@
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+#
+# KISS: no alpine.  No CGO.  Dynamic libraries.  Nice and simple, but bloated. 
+#
+
+
+ARG GO_VER
+FROM golang:${GO_VER}
+
+ARG GO_TAGS
+ARG FABRIC_VER
+ARG TARGETARCH
+ARG TARGETOS
+
+ADD . $GOPATH/src/github.com/hyperledger/fabric
+WORKDIR $GOPATH/src/github.com/hyperledger/fabric
+
+ENV FABRIC_VER      ${FABRIC_VER}
+ENV FABRIC_CFG_PATH /etc/hyperledger/fabric
+
+RUN make peer GO_TAGS=${GO_TAGS}
+RUN make ccaasbuilder
+
+RUN cp build/bin/* /usr/local/bin/
+
+RUN mkdir -p /opt/hyperledger/ccaas_builder/bin
+RUN cp release/${TARGETOS}-${TARGETARCH}/builders/ccaas/bin/* /opt/hyperledger/ccaas_builder/bin/
+
+COPY sampleconfig/msp ${FABRIC_CFG_PATH}/msp
+COPY sampleconfig/core.yaml ${FABRIC_CFG_PATH}/core.yaml
+
+VOLUME /etc/hyperledger/fabric
+VOLUME /var/hyperledger
+
+EXPOSE 7051
+
+ENTRYPOINT [ "peer" ]
+CMD [ "node","start" ]
