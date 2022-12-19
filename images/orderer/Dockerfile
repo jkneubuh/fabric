@@ -14,10 +14,8 @@ ARG TARGETOS
 ARG TARGETARCH
 ARG FABRIC_VER
 
-RUN REV=$(echo $FABRIC_VER | sed -e  's/^v\(.*\)/\1/') && \
-    curl -sL https://github.com/hyperledger/fabric/releases/download/${FABRIC_VER}/hyperledger-fabric-${TARGETOS}-${TARGETARCH}-${REV}.tar.gz \
-    | tar zxvf - \
-        -C /usr/local bin/orderer
+# Just copy the release build outputs for the target arch
+COPY    release/${TARGETOS}-${TARGETARCH}/bin/orderer /usr/local/bin
 
 ENV     FABRIC_CFG_PATH            /var/hyperledger/fabric/config
 ENV     FABRIC_VER                 ${FABRIC_VER}
