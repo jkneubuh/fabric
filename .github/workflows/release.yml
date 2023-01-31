@@ -6,7 +6,11 @@ name: Release
 
 on:
   push:
-    tags: [ v2.* ]
+    tags:
+      - "v2.*"
+    branches:
+      - "release-2.5"
+      - "prequel-2.5"
 
 env:
   GO_VER: 1.18.10
