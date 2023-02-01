@@ -25,6 +25,8 @@ _arg_fabric_version="2.4.8"
 _arg_ca_version="1.5.5"
 
 REGISTRY=${FABRIC_DOCKER_REGISTRY:-docker.io/hyperledger}
+RELEASE_ARCHIVE=${FABRIC_RELEASE_ARCHIVE:-https://github.com/hyperledger}
+
 ARCH=$(echo "$(uname -s|tr '[:upper:]' '[:lower:]'|sed 's/mingw64_nt.*/windows/')-$(uname -m |sed 's/x86_64/amd64/g')")
 MARCH=$(uname -m)
 
@@ -198,7 +200,7 @@ download() {
 
 pullBinaries() {
     echo "===> Downloading version ${FABRIC_TAG} platform specific fabric binaries"
-    download "${BINARY_FILE}" "https://github.com/hyperledger/fabric/releases/download/v${VERSION}/${BINARY_FILE}"
+    download "${BINARY_FILE}" "${RELEASE_ARCHIVE}/fabric/releases/download/v${VERSION}/${BINARY_FILE}"
     if [ $? -eq 22 ]; then
         echo
         echo "------> ${FABRIC_TAG} platform specific fabric binary is not available to download <----"
@@ -207,7 +209,7 @@ pullBinaries() {
     fi
 
     echo "===> Downloading version ${CA_TAG} platform specific fabric-ca-client binary"
-    download "${CA_BINARY_FILE}" "https://github.com/hyperledger/fabric-ca/releases/download/v${CA_VERSION}/${CA_BINARY_FILE}"
+    download "${CA_BINARY_FILE}" "${RELEASE_ARCHIVE}/fabric-ca/releases/download/v${CA_VERSION}/${CA_BINARY_FILE}"
     if [ $? -eq 22 ]; then
         echo
         echo "------> ${CA_TAG} fabric-ca-client binary is not available to download  (Available from 1.1.0-rc1) <----"
