@@ -15,7 +15,7 @@ on:
 env:
   GO_VER: 1.18.10
   UBUNTU_VER: 20.04
-  FABRIC_VER: ${{ github.event_name == 'tag' && github.ref_name || github.ref_name + '-devdev' }}
+  FABRIC_VER: ${{ github.event_name == 'tag' && github.ref_name || format('v-{0}-dev', github.ref_name) }}
   DOCKER_REGISTRY: ${{ github.repository_owner == 'hyperledger' && 'docker.io' || 'ghcr.io' }}
 
 permissions:
