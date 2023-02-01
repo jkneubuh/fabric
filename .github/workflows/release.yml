@@ -15,7 +15,8 @@ on:
 env:
   GO_VER: 1.18.10
   UBUNTU_VER: 20.04
-  FABRIC_VER: ${{ github.event_name == 'tag' && github.ref_name || format('v{0}-dev', github.ref_name) }}
+  #FABRIC_VER: ${{ github.event_name == 'tag' && github.ref_name || format('v{0}-dev', github.ref_name) }}
+  FABRIC_VER: ${{ github.ref_name }}
   DOCKER_REGISTRY: ${{ github.repository_owner == 'hyperledger' && 'docker.io' || 'ghcr.io' }}
 
 permissions:
@@ -117,7 +118,7 @@ jobs:
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}.{{minor}}.{{patch}}
-            type=ref,enable=true,priority=600,prefix=,suffix=-dev,event=branch
+            type=ref,enable=true,priority=600,prefix=,suffix=-edge,event=branch
 
       - name: Build and push ${{ matrix.COMPONENT }} Image
         id: push

@@ -61,24 +61,24 @@ MAKEFLAGS += --no-builtin-rules
 
 BUILD_DIR ?= build
 
-FABRIC_VERSION ?= $(shell git describe --tags)
+FABRIC_VER ?= $(shell git describe --tags)
 GIT_COMMIT_SHA ?= $(shell git rev-parse --short HEAD)
 
-#PROJECT_VERSION=$(FABRIC_VER)-snapshot-$(EXTRA_VERSION)
-PROJECT_VERSION = $(FABRIC_VERSION)
+PROJECT_VERSION=$(FABRIC_VER)-snapshot-$(EXTRA_VERSION)
+#PROJECT_VERSION = $(FABRIC_VER)
 
 # TWO_DIGIT_VERSION is derived, e.g. "2.0", especially useful as a local tag
 # for two digit references to most recent baseos and ccenv patch releases
 # TWO_DIGIT_VERSION removes the (optional) semrev 'v' character from the git
 # tag triggering a Fabric release.
-TWO_DIGIT_VERSION = $(shell echo $(FABRIC_VERSION) | sed -e  's/^v\(.*\)/\1/' | cut -d '.' -f 1,2)
+TWO_DIGIT_VERSION = $(shell echo $(FABRIC_VER) | sed -e  's/^v\(.*\)/\1/' | cut -d '.' -f 1,2)
 
 PKGNAME = github.com/hyperledger/fabric
 ARCH=$(shell go env GOARCH)
 MARCH=$(shell go env GOOS)-$(shell go env GOARCH)
 
 # defined in common/metadata/metadata.go
-METADATA_VAR = Version=$(FABRIC_VERSION)
+METADATA_VAR = Version=$(FABRIC_VER)
 METADATA_VAR += CommitSHA=$(GIT_COMMIT_SHA)
 METADATA_VAR += BaseDockerLabel=$(BASE_DOCKER_LABEL)
 METADATA_VAR += DockerNamespace=$(DOCKER_NS)
@@ -252,7 +252,7 @@ $(BUILD_DIR)/images/%/$(DUMMY):
 	$(DBUILD) -f images/$*/Dockerfile \
 		--build-arg GO_VER=$(GO_VER) \
 		--build-arg UBUNTU_VER=$(UBUNTU_VER) \
-		--build-arg FABRIC_VER=$(FABRIC_VERSION) \
+		--build-arg FABRIC_VER=$(FABRIC_VER) \
 		--build-arg TARGETARCH=$(ARCH) \
 		--build-arg TARGETOS=linux \
 		$(BUILD_ARGS) \
