@@ -79,12 +79,12 @@ jobs:
             CONTEXT: images/baseos
           - COMPONENT: ccenv
             CONTEXT: images/ccenv
-#          - COMPONENT: peer
-#            CONTEXT: .
-#          - COMPONENT: orderer
-#            CONTEXT: .
-#          - COMPONENT: tools
-#            CONTEXT: .
+          - COMPONENT: peer
+            CONTEXT: .
+          - COMPONENT: orderer
+            CONTEXT: .
+          - COMPONENT: tools
+            CONTEXT: .
 
     steps:
       - name: Set up QEMU
