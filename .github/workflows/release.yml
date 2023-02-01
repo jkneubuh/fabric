@@ -118,7 +118,7 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
             type=semver,pattern={{major}}.{{minor}}.{{patch}}
             type=ref,enable=true,priority=600,prefix=,suffix=,event=branch
-  
+
       - name: Build and push ${{ matrix.COMPONENT }} Image
         id: push
         uses: docker/build-push-action@v3
