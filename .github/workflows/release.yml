@@ -15,8 +15,8 @@ on:
 env:
   GO_VER: 1.18.10
   UBUNTU_VER: 20.04
-  #FABRIC_VER: ${{ github.event_name == 'tag' && github.ref_name || format('v{0}-dev', github.ref_name) }}
-  FABRIC_VER: ${{ github.ref_name }}
+  FABRIC_VER: ${{ github.event_name == 'tag' && github.ref_name || format('{0}-edge', github.ref_name) }}
+  #FABRIC_VER: ${{ github.ref_name }}
   DOCKER_REGISTRY: ${{ github.repository_owner == 'hyperledger' && 'docker.io' || 'ghcr.io' }}
 
 permissions:
@@ -80,12 +80,12 @@ jobs:
             CONTEXT: images/baseos
           - COMPONENT: ccenv
             CONTEXT: images/ccenv
-#          - COMPONENT: peer
-#            CONTEXT: .
-#          - COMPONENT: orderer
-#            CONTEXT: .
-#          - COMPONENT: tools
-#            CONTEXT: .
+          - COMPONENT: peer
+            CONTEXT: .
+          - COMPONENT: orderer
+            CONTEXT: .
+          - COMPONENT: tools
+            CONTEXT: .
 
     steps:
       - name: Set up QEMU
