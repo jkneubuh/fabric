@@ -24,7 +24,7 @@ _arg_comp=('' )
 _arg_fabric_version="2.4.8"
 _arg_ca_version="1.5.5"
 
-REGISTRY=${FABRIC_DOCKER_REGISTRY:-docker.io/hyperledger}
+REGISTRY=${FABRIC_DOCKER_REGISTRY:-hyperledger}
 RELEASE_ARCHIVE=${FABRIC_RELEASE_ARCHIVE:-https://github.com/hyperledger}
 
 ARCH=$(echo "$(uname -s|tr '[:upper:]' '[:lower:]'|sed 's/mingw64_nt.*/windows/')-$(uname -m |sed 's/x86_64/amd64/g')")
@@ -237,7 +237,7 @@ pullImages() {
         CA_IMAGE=(ca)
         singleImagePull "${CA_TAG}" "${CA_IMAGE[@]}"
         echo "===> List out hyperledger images"
-        ${CONTAINER_CLI} images | grep hyperledger
+        ${CONTAINER_CLI} images | grep ${REGISTRY}
     else
         echo "========================================================="
         echo "${CONTAINER_CLI} not installed, bypassing download of Fabric images"
