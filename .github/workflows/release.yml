@@ -8,7 +8,7 @@ on:
   push:
     tags:
       - "v[2-3].*"
-    branch:
+    branches:
       - "prequel-2.5"
 
 env:
