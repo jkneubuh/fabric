@@ -7,12 +7,15 @@ name: Release
 on:
   push:
     tags:
-      - "v2.*"
+      - "v[2-3].*"
+    branch:
+      - "prequel-2.5"
 
 env:
   GO_VER: 1.18.10
   UBUNTU_VER: 20.04
-  FABRIC_VER: ${{ github.ref_name }}
+  FABRIC_VER: ${{ github.event_name == 'tag' && github.ref_name || 'v2.5.0-edge' }}
+  #FABRIC_VER: ${{ github.ref_name }}
   DOCKER_REGISTRY: ${{ github.repository_owner == 'hyperledger' && 'docker.io' || 'ghcr.io' }}
 
 permissions:
