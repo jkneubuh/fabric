@@ -7,7 +7,7 @@ name: Release
 on:
   push:
     tags:
-      - "v[2-3].*"
+      - "v2.*"
 
 env:
   GO_VER: 1.18.10
